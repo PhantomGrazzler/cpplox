@@ -5,10 +5,23 @@
 namespace
 {
 
-[[nodiscard]] size_t SimpleInstruction( const OpCode opcode, size_t offset )
+[[nodiscard]] size_t SimpleInstruction( const OpCode opcode, const size_t offset )
 {
     std::println( "{}", ToString( opcode ) );
     return offset + 1;
+}
+
+[[nodiscard]] size_t ConstantInstruction(
+    const OpCode opcode, const Chunk& chunk, const size_t offset )
+{
+    const auto constantIndex = chunk.code.at( offset + 1 );
+    std::println(
+        "{:16} {:4} '{}'",
+        ToString( opcode ),
+        constantIndex,
+        chunk.constants.values.at( constantIndex ) );
+
+    return offset + 2;
 }
 
 } // namespace
@@ -28,14 +41,17 @@ void DisassembleChunk( const Chunk& chunk, const std::string_view name )
 size_t DisassembleInstruction( const Chunk& chunk, size_t offset )
 {
     std::print( "{:04} ", offset );
-    const OpCode instruction = chunk.code.at( offset );
+    const auto instructionByte = chunk.code.at( offset );
+    const auto instruction = static_cast<OpCode>( instructionByte );
 
     switch ( instruction )
     {
     case OpCode::OP_RETURN:
         return SimpleInstruction( instruction, offset );
+    case OpCode::OP_CONSTANT:
+        return ConstantInstruction( instruction, chunk, offset );
     default:
-        std::println( "Unknown opcode {}", static_cast<std::uint8_t>( instruction ) );
+        std::println( "Unknown opcode {}", instructionByte );
         return offset + 1;
     }
 }
