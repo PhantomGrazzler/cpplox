@@ -29,16 +29,19 @@ constexpr [[nodiscard]] std::string_view ToString( const OpCode opcode )
 struct Chunk
 {
     std::vector<uint8_t> code;
+    std::vector<int> lines;
     ValueArray constants;
 
-    constexpr void WriteChunk( const OpCode opcode )
+    constexpr void WriteChunk( const OpCode opcode, const int line )
     {
         code.push_back( std::to_underlying( opcode ) );
+        lines.push_back( line );
     }
 
-    constexpr void WriteChunk( const uint8_t byte )
+    constexpr void WriteChunk( const uint8_t byte, const int line )
     {
         code.push_back( byte );
+        lines.push_back( line );
     }
 
     constexpr size_t AddConstant( const Value value )

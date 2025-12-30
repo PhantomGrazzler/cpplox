@@ -38,9 +38,18 @@ void DisassembleChunk( const Chunk& chunk, const std::string_view name )
     }
 }
 
-size_t DisassembleInstruction( const Chunk& chunk, size_t offset )
+size_t DisassembleInstruction( const Chunk& chunk, const size_t offset )
 {
     std::print( "{:04} ", offset );
+    if ( offset > 0 && chunk.lines.at( offset ) == chunk.lines.at( offset - 1 ) )
+    {
+        std::print( "   | " );
+    }
+    else
+    {
+        std::print( "{:4} ", chunk.lines.at( offset ) );
+    }
+
     const auto instructionByte = chunk.code.at( offset );
     const auto instruction = static_cast<OpCode>( instructionByte );
 
