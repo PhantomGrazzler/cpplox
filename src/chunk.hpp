@@ -7,13 +7,16 @@
 #include <string_view>
 #include <utility>
 
+namespace cpplox
+{
+
 enum class OpCode : std::uint8_t
 {
     OP_CONSTANT,
     OP_RETURN,
 };
 
-constexpr [[nodiscard]] std::string_view ToString( const OpCode opcode )
+[[nodiscard]] constexpr std::string_view ToString( const OpCode opcode )
 {
     switch ( opcode )
     {
@@ -50,3 +53,5 @@ struct Chunk
         return constants.values.size() - 1;
     }
 };
+
+} // namespace cpplox

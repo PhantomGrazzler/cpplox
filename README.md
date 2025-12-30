@@ -1,5 +1,7 @@
 # cpplox
 
+[![CMake on multiple platforms](https://github.com/PhantomGrazzler/cpplox/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/PhantomGrazzler/cpplox/actions/workflows/cmake-multi-platform.yml)
+
 A Lox interpreter written in C++, based on Bob Nystrom's excellent book [Crafting Interpreters](http://craftinginterpreters.com/). The associated GitHub repo for the book is [https://github.com/munificent/craftinginterpreters](https://github.com/munificent/craftinginterpreters).
 
 ## Completed sections

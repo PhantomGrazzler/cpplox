@@ -5,14 +5,14 @@
 namespace
 {
 
-[[nodiscard]] size_t SimpleInstruction( const OpCode opcode, const size_t offset )
+[[nodiscard]] size_t SimpleInstruction( const cpplox::OpCode opcode, const size_t offset )
 {
     std::println( "{}", ToString( opcode ) );
     return offset + 1;
 }
 
 [[nodiscard]] size_t ConstantInstruction(
-    const OpCode opcode, const Chunk& chunk, const size_t offset )
+    const cpplox::OpCode opcode, const cpplox::Chunk& chunk, const size_t offset )
 {
     const auto constantIndex = chunk.code.at( offset + 1 );
     std::println(
@@ -26,7 +26,7 @@ namespace
 
 } // namespace
 
-namespace debug
+namespace cpplox::debug
 {
 
 void DisassembleChunk( const Chunk& chunk, const std::string_view name )
@@ -65,4 +65,4 @@ size_t DisassembleInstruction( const Chunk& chunk, const size_t offset )
     }
 }
 
-} // namespace debug
+} // namespace cpplox::debug
