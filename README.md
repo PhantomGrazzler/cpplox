@@ -10,7 +10,7 @@ See [cslox](https://github.com/PhantomGrazzler/cslox) for the tree-walk interpre
 
 ### Bytecode virtual machine
 
-- [x] Chapter 14. [Chunks of Bytecode](https://craftinginterpreters.com/chunks-of-bytecode.html)
+- [x] Chapter 14. [Chunks of Bytecode](https://craftinginterpreters.com/chunks-of-bytecode.html) (Tag [Chapter14_ChunksOfBytecode](https://github.com/PhantomGrazzler/cpplox/releases/tag/Chapter14_ChunksOfBytecode))
 - [ ] Chapter 15. [A Virtual Machine](https://craftinginterpreters.com/a-virtual-machine.html)
 - [ ] Chapter 16. [Scanning on Demand](https://craftinginterpreters.com/scanning-on-demand.html)
 - [ ] Chapter 17. [Compiling Expressions](https://craftinginterpreters.com/compiling-expressions.html)
