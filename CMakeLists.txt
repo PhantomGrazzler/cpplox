@@ -33,5 +33,12 @@ if(MSVC)
     )
 endif()
 
+add_custom_target(config
+    SOURCES .clang-format
+            .editorconfig
+            LICENSE
+            README.md
+)
+
 # Now add the sub-directory that actually contains our executables.
 add_subdirectory(src)
