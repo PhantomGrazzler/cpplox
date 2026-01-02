@@ -70,6 +70,7 @@ int main()
         Interpret( &chunk );
     }
 
+    // 1 + 2 * 3 - 4 / -5
     {
         Chunk chunk;
 
