@@ -38,6 +38,7 @@ add_custom_target(config
             .editorconfig
             LICENSE
             README.md
+            .github/workflows/cmake-multi-platform.yml
 )
 
 # Now add the sub-directory that actually contains our executables.
