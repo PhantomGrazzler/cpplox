@@ -2,10 +2,12 @@
 #include "debug.hpp"
 #include "value.hpp"
 #include "chunk.hpp"
+#include "compiler.hpp"
 
 #include <print>
 #include <cstdint>
 #include <functional>
+#include <string_view>
 
 #define DEBUG_TRACE_EXECUTION
 
@@ -90,11 +92,11 @@ static cpplox::InterpretResult Run()
         case OpCode::OP_RETURN:
         {
             std::println( "{}", vm.PopValue() );
-            return InterpretResult::INTERPRET_OK;
+            return InterpretResult::Ok;
         }
 
         default:
-            return InterpretResult::INTERPRET_RUNTIME_ERROR;
+            return InterpretResult::RuntimeError;
         }
     }
 }
@@ -109,6 +111,13 @@ InterpretResult Interpret( Chunk* pChunk )
     vm.pChunk = pChunk;
     vm.instructionIndex = 0;
     return Run();
+}
+
+InterpretResult Interpret( const std::string_view source )
+{
+    Compile( source );
+
+    return InterpretResult::Ok;
 }
 
 } // namespace cpplox

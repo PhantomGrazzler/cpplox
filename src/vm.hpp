@@ -4,18 +4,20 @@
 #include "value.hpp"
 
 #include <stack>
+#include <string_view>
 
 namespace cpplox
 {
 
 enum class InterpretResult
 {
-    INTERPRET_OK,
-    INTERPRET_COMPILE_ERROR,
-    INTERPRET_RUNTIME_ERROR,
+    Ok,
+    CompileError,
+    RuntimeError,
 };
 
 InterpretResult Interpret( Chunk* pChunk );
+InterpretResult Interpret( const std::string_view source );
 
 struct VM
 {
