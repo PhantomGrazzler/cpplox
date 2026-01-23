@@ -15,7 +15,7 @@ See [cslox](https://github.com/PhantomGrazzler/cslox) for the tree-walk interpre
 - [x] Chapter 14. [Chunks of Bytecode](https://craftinginterpreters.com/chunks-of-bytecode.html) (Tag [Chapter14_ChunksOfBytecode](https://github.com/PhantomGrazzler/cpplox/releases/tag/Chapter14_ChunksOfBytecode))
 - [x] Chapter 15. [A Virtual Machine](https://craftinginterpreters.com/a-virtual-machine.html) (Tag [Chapter15_AVirtualMachine](https://github.com/PhantomGrazzler/cpplox/releases/tag/Chapter15_AVirtualMachine))
 - [x] Chapter 16. [Scanning on Demand](https://craftinginterpreters.com/scanning-on-demand.html) (Tag [Chapter16_ScanningOnDemand](https://github.com/PhantomGrazzler/cpplox/releases/tag/Chapter16_ScanningOnDemand))
-- [ ] Chapter 17. [Compiling Expressions](https://craftinginterpreters.com/compiling-expressions.html)
+- [x] Chapter 17. [Compiling Expressions](https://craftinginterpreters.com/compiling-expressions.html) (Tag [Chapter17_CompilingExpressions](https://github.com/PhantomGrazzler/cpplox/releases/tag/Chapter17_CompilingExpressions))
 - [ ] Chapter 18. [Types of Values](https://craftinginterpreters.com/types-of-values.html)
 - [ ] Chapter 19. [Strings](https://craftinginterpreters.com/strings.html)
 - [ ] Chapter 20. [Hash Tables](https://craftinginterpreters.com/hash-tables.html)

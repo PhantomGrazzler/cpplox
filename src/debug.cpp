@@ -55,14 +55,14 @@ size_t DisassembleInstruction( const Chunk& chunk, const size_t offset )
 
     switch ( instruction )
     {
-    case OpCode::OP_RETURN:
-    case OpCode::OP_NEGATE:
-    case OpCode::OP_ADD:
-    case OpCode::OP_SUBTRACT:
-    case OpCode::OP_MULTIPLY:
-    case OpCode::OP_DIVIDE:
+    case OpCode::Return:
+    case OpCode::Negate:
+    case OpCode::Add:
+    case OpCode::Subtract:
+    case OpCode::Multiply:
+    case OpCode::Divide:
         return SimpleInstruction( instruction, offset );
-    case OpCode::OP_CONSTANT:
+    case OpCode::Constant:
         return ConstantInstruction( instruction, chunk, offset );
     default:
         std::println( "Unknown opcode {}", instructionByte );

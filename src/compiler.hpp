@@ -1,10 +1,13 @@
 #pragma once
 
+#include "chunk.hpp"
+
 #include <string_view>
+#include <optional>
 
 namespace cpplox
 {
 
-void Compile( const std::string_view source );
+std::optional<Chunk> Compile( const std::string_view source );
 
 } // namespace cpplox

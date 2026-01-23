@@ -18,7 +18,7 @@ namespace
 static void PushConstant( cpplox::Chunk& chunk, const cpplox::Value value )
 {
     auto constantIndex = chunk.AddConstant( value );
-    chunk.WriteChunk( cpplox::OpCode::OP_CONSTANT, 1 );
+    chunk.WriteChunk( cpplox::OpCode::Constant, 1 );
     chunk.WriteChunk( static_cast<uint8_t>( constantIndex ), 1 );
 }
 
@@ -33,14 +33,14 @@ void ExecuteTestChunks()
         PushConstant( chunk, 1.2 );
         PushConstant( chunk, 3.4 );
 
-        chunk.WriteChunk( OpCode::OP_ADD, 1 );
+        chunk.WriteChunk( OpCode::Add, 1 );
 
         PushConstant( chunk, 5.6 );
 
-        chunk.WriteChunk( OpCode::OP_DIVIDE, 1 );
-        chunk.WriteChunk( OpCode::OP_NEGATE, 1 );
+        chunk.WriteChunk( OpCode::Divide, 1 );
+        chunk.WriteChunk( OpCode::Negate, 1 );
 
-        chunk.WriteChunk( OpCode::OP_RETURN, 2 );
+        chunk.WriteChunk( OpCode::Return, 2 );
         Interpret( &chunk );
     }
 
@@ -51,13 +51,13 @@ void ExecuteTestChunks()
         PushConstant( chunk, 1 );
         PushConstant( chunk, 2 );
 
-        chunk.WriteChunk( OpCode::OP_MULTIPLY, 1 );
+        chunk.WriteChunk( OpCode::Multiply, 1 );
 
         PushConstant( chunk, 3 );
 
-        chunk.WriteChunk( OpCode::OP_ADD, 1 );
+        chunk.WriteChunk( OpCode::Add, 1 );
 
-        chunk.WriteChunk( OpCode::OP_RETURN, 2 );
+        chunk.WriteChunk( OpCode::Return, 2 );
         Interpret( &chunk );
     }
 
@@ -69,10 +69,10 @@ void ExecuteTestChunks()
         PushConstant( chunk, 2 );
         PushConstant( chunk, 3 );
 
-        chunk.WriteChunk( OpCode::OP_MULTIPLY, 1 );
-        chunk.WriteChunk( OpCode::OP_ADD, 1 );
+        chunk.WriteChunk( OpCode::Multiply, 1 );
+        chunk.WriteChunk( OpCode::Add, 1 );
 
-        chunk.WriteChunk( OpCode::OP_RETURN, 2 );
+        chunk.WriteChunk( OpCode::Return, 2 );
         Interpret( &chunk );
     }
 
@@ -84,17 +84,17 @@ void ExecuteTestChunks()
         PushConstant( chunk, 2 );
         PushConstant( chunk, 3 );
 
-        chunk.WriteChunk( OpCode::OP_MULTIPLY, 1 );
+        chunk.WriteChunk( OpCode::Multiply, 1 );
 
         PushConstant( chunk, 4 );
         PushConstant( chunk, 5 );
 
-        chunk.WriteChunk( OpCode::OP_NEGATE, 1 );
-        chunk.WriteChunk( OpCode::OP_DIVIDE, 1 );
-        chunk.WriteChunk( OpCode::OP_SUBTRACT, 1 );
-        chunk.WriteChunk( OpCode::OP_ADD, 1 );
+        chunk.WriteChunk( OpCode::Negate, 1 );
+        chunk.WriteChunk( OpCode::Divide, 1 );
+        chunk.WriteChunk( OpCode::Subtract, 1 );
+        chunk.WriteChunk( OpCode::Add, 1 );
 
-        chunk.WriteChunk( OpCode::OP_RETURN, 2 );
+        chunk.WriteChunk( OpCode::Return, 2 );
         Interpret( &chunk );
     }
 }
@@ -109,7 +109,17 @@ static void Repl()
 
         if ( std::string line; std::getline( std::cin, line ) )
         {
-            cpplox::Interpret( line );
+            if ( line == "exit" )
+            {
+                std::println( "Exiting..." );
+                break;
+            }
+
+            const auto result = cpplox::Interpret( line );
+            if ( result == cpplox::InterpretResult::CompileError )
+            {
+                std::println( "Compile error." );
+            }
         }
 
         std::println();

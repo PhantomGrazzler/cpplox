@@ -4,6 +4,9 @@
 
 #include <string_view>
 
+// #define DEBUG_TRACE_EXECUTION
+#define DEBUG_PRINT_CODE
+
 namespace cpplox::debug
 {
 

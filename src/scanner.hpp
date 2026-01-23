@@ -149,10 +149,9 @@ enum class TokenType
 
 struct Token
 {
-    TokenType type;
-    std::string_view::const_iterator start;
-    std::string_view::const_iterator end;
-    unsigned int line;
+    TokenType type = TokenType::Eof;
+    std::string_view lexeme;
+    unsigned int line = 0;
 };
 
 class Scanner
@@ -182,9 +181,7 @@ private:
     [[nodiscard]] inline constexpr TokenType CheckKeyword(
         const unsigned int offset, std::string_view keyword, const TokenType type ) const
     {
-        return std::equal( keyword.begin(), keyword.end(), start + offset, current )
-                   ? type
-                   : TokenType::Identifier;
+        return std::equal( keyword.begin(), keyword.end(), start + offset, current ) ? type : TokenType::Identifier;
     }
 
     /**
@@ -212,8 +209,7 @@ private:
     {
         return Token{
             .type = type,
-            .start = start,
-            .end = current,
+            .lexeme = std::string_view{ start, current },
             .line = current_line,
         };
     }
@@ -222,8 +218,7 @@ private:
     {
         return Token{
             .type = TokenType::Error,
-            .start = message.begin(),
-            .end = message.end(),
+            .lexeme = std::string_view{ message.begin(), message.end() },
             .line = current_line,
         };
     }

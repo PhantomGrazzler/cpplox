@@ -9,8 +9,6 @@
 #include <functional>
 #include <string_view>
 
-#define DEBUG_TRACE_EXECUTION
-
 namespace cpplox
 {
 // Is there a way to reduce the scope of this variable while keeping the code readable?
@@ -53,43 +51,43 @@ static cpplox::InterpretResult Run()
         const auto instruction = static_cast<OpCode>( instructionByte );
         switch ( instruction )
         {
-        case OpCode::OP_CONSTANT:
+        case OpCode::Constant:
         {
             vm.stack.push( ReadConstant() );
             break;
         }
 
-        case OpCode::OP_ADD:
+        case OpCode::Add:
         {
             vm.stack.push( BinaryOperation( vm, std::plus<>() ) );
             break;
         }
 
-        case OpCode::OP_SUBTRACT:
+        case OpCode::Subtract:
         {
             vm.stack.push( BinaryOperation( vm, std::minus<>() ) );
             break;
         }
 
-        case OpCode::OP_MULTIPLY:
+        case OpCode::Multiply:
         {
             vm.stack.push( BinaryOperation( vm, std::multiplies<>() ) );
             break;
         }
 
-        case OpCode::OP_DIVIDE:
+        case OpCode::Divide:
         {
             vm.stack.push( BinaryOperation( vm, std::divides<>() ) );
             break;
         }
 
-        case OpCode::OP_NEGATE:
+        case OpCode::Negate:
         {
             vm.stack.push( -vm.PopValue() );
             break;
         }
 
-        case OpCode::OP_RETURN:
+        case OpCode::Return:
         {
             std::println( "{}", vm.PopValue() );
             return InterpretResult::Ok;
@@ -115,9 +113,16 @@ InterpretResult Interpret( Chunk* pChunk )
 
 InterpretResult Interpret( const std::string_view source )
 {
-    Compile( source );
+    auto chunk = Compile( source );
+    if ( !chunk.has_value() )
+    {
+        return InterpretResult::CompileError;
+    }
 
-    return InterpretResult::Ok;
+    vm.pChunk = &( *chunk );
+    vm.instructionIndex = 0;
+
+    return Run();
 }
 
 } // namespace cpplox

@@ -12,33 +12,33 @@ namespace cpplox
 
 enum class OpCode : std::uint8_t
 {
-    OP_CONSTANT,
-    OP_ADD,
-    OP_SUBTRACT,
-    OP_MULTIPLY,
-    OP_DIVIDE,
-    OP_NEGATE,
-    OP_RETURN,
+    Constant,
+    Add,
+    Subtract,
+    Multiply,
+    Divide,
+    Negate,
+    Return,
 };
 
 [[nodiscard]] constexpr std::string_view ToString( const OpCode opcode )
 {
     switch ( opcode )
     {
-    case OpCode::OP_CONSTANT:
-        return "OP_CONSTANT";
-    case OpCode::OP_ADD:
-        return "OP_ADD";
-    case OpCode::OP_SUBTRACT:
-        return "OP_SUBTRACT";
-    case OpCode::OP_MULTIPLY:
-        return "OP_MULTIPLY";
-    case OpCode::OP_DIVIDE:
-        return "OP_DIVIDE";
-    case OpCode::OP_NEGATE:
-        return "OP_NEGATE";
-    case OpCode::OP_RETURN:
-        return "OP_RETURN";
+    case OpCode::Constant:
+        return "Constant";
+    case OpCode::Add:
+        return "Add";
+    case OpCode::Subtract:
+        return "Subtract";
+    case OpCode::Multiply:
+        return "Multiply";
+    case OpCode::Divide:
+        return "Divide";
+    case OpCode::Negate:
+        return "Negate";
+    case OpCode::Return:
+        return "Return";
     default:
         return "Unknown opcode";
     }
