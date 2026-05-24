@@ -6,12 +6,15 @@ target_sources(cpplox PRIVATE
     compiler.cpp
     debug.cpp
     scanner.cpp
+    stack.cpp
+    value.cpp
     vm.cpp
 
     chunk.hpp
     compiler.hpp
     debug.hpp
     scanner.hpp
+    stack.hpp
     value.hpp
     vm.hpp
  )
@@ -20,6 +23,6 @@ target_sources(cpplox PRIVATE
     PRIVATE project_warnings
 )
 
-set_target_properties(cpplox PROPERTIES 
+set_target_properties(cpplox PROPERTIES
     VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$(Configuration)"
 )

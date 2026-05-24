@@ -1,4 +1,5 @@
 #include "debug.hpp"
+#include "value.hpp"
 
 #include <print>
 
@@ -11,15 +12,14 @@ namespace
     return offset + 1;
 }
 
-[[nodiscard]] size_t ConstantInstruction(
-    const cpplox::OpCode opcode, const cpplox::Chunk& chunk, const size_t offset )
+[[nodiscard]] size_t ConstantInstruction( const cpplox::OpCode opcode, const cpplox::Chunk& chunk, const size_t offset )
 {
     const auto constantIndex = chunk.code.at( offset + 1 );
     std::println(
         "{:16} {:4} '{}'",
         ToString( opcode ),
         constantIndex,
-        chunk.constants.values.at( constantIndex ) );
+        cpplox::ToString( chunk.constants.values.at( constantIndex ) ) );
 
     return offset + 2;
 }
@@ -61,6 +61,13 @@ size_t DisassembleInstruction( const Chunk& chunk, const size_t offset )
     case OpCode::Subtract:
     case OpCode::Multiply:
     case OpCode::Divide:
+    case OpCode::Nil:
+    case OpCode::False:
+    case OpCode::True:
+    case OpCode::Not:
+    case OpCode::Equal:
+    case OpCode::Greater:
+    case OpCode::Less:
         return SimpleInstruction( instruction, offset );
     case OpCode::Constant:
         return ConstantInstruction( instruction, chunk, offset );

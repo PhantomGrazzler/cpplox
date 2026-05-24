@@ -2,8 +2,8 @@
 
 #include "chunk.hpp"
 #include "value.hpp"
+#include "stack.hpp"
 
-#include <stack>
 #include <string_view>
 
 namespace cpplox
@@ -28,7 +28,7 @@ struct VM
     //
     // TODO: Can we use std::span instead to have pointer-like behaviour while keeping safety?
     size_t instructionIndex = 0;
-    std::stack<Value> stack;
+    Stack<Value> stack;
 
     [[nodiscard]] Value PopValue()
     {

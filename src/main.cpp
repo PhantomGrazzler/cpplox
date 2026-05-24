@@ -48,12 +48,12 @@ void ExecuteTestChunks()
     {
         Chunk chunk;
 
-        PushConstant( chunk, 1 );
-        PushConstant( chunk, 2 );
+        PushConstant( chunk, 1.0 );
+        PushConstant( chunk, 2.0 );
 
         chunk.WriteChunk( OpCode::Multiply, 1 );
 
-        PushConstant( chunk, 3 );
+        PushConstant( chunk, 3.0 );
 
         chunk.WriteChunk( OpCode::Add, 1 );
 
@@ -65,9 +65,9 @@ void ExecuteTestChunks()
     {
         Chunk chunk;
 
-        PushConstant( chunk, 1 );
-        PushConstant( chunk, 2 );
-        PushConstant( chunk, 3 );
+        PushConstant( chunk, 1.0 );
+        PushConstant( chunk, 2.0 );
+        PushConstant( chunk, 3.0 );
 
         chunk.WriteChunk( OpCode::Multiply, 1 );
         chunk.WriteChunk( OpCode::Add, 1 );
@@ -80,14 +80,14 @@ void ExecuteTestChunks()
     {
         Chunk chunk;
 
-        PushConstant( chunk, 1 );
-        PushConstant( chunk, 2 );
-        PushConstant( chunk, 3 );
+        PushConstant( chunk, 1.0 );
+        PushConstant( chunk, 2.0 );
+        PushConstant( chunk, 3.0 );
 
         chunk.WriteChunk( OpCode::Multiply, 1 );
 
-        PushConstant( chunk, 4 );
-        PushConstant( chunk, 5 );
+        PushConstant( chunk, 4.0 );
+        PushConstant( chunk, 5.0 );
 
         chunk.WriteChunk( OpCode::Negate, 1 );
         chunk.WriteChunk( OpCode::Divide, 1 );

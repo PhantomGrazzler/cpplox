@@ -154,6 +154,12 @@ static void EmitBytes( const OpCode opcode, const std::uint8_t byte )
     EmitByte( byte );
 }
 
+static void EmitBytes( const OpCode opcode1, const OpCode opcode2 )
+{
+    EmitByte( opcode1 );
+    EmitByte( opcode2 );
+}
+
 static void EmitReturn()
 {
     EmitByte( OpCode::Return );
@@ -227,6 +233,24 @@ static void Binary()
 
     switch ( operatorType )
     {
+    case TokenType::BangEqual:
+        EmitBytes( OpCode::Equal, OpCode::Not );
+        break;
+    case TokenType::EqualEqual:
+        EmitByte( OpCode::Equal );
+        break;
+    case TokenType::Greater:
+        EmitByte( OpCode::Greater );
+        break;
+    case TokenType::GreaterEqual:
+        EmitBytes( OpCode::Less, OpCode::Not );
+        break;
+    case TokenType::Less:
+        EmitByte( OpCode::Less );
+        break;
+    case TokenType::LessEqual:
+        EmitBytes( OpCode::Greater, OpCode::Not );
+        break;
     case TokenType::Plus:
         EmitByte( OpCode::Add );
         break;
@@ -245,6 +269,26 @@ static void Binary()
     }
 }
 
+static void Literal()
+{
+    const auto literalType = parser.previous.type;
+    switch ( literalType )
+    {
+    case TokenType::Nil:
+        EmitByte( OpCode::Nil );
+        break;
+    case TokenType::False:
+        EmitByte( OpCode::False );
+        break;
+    case TokenType::True:
+        EmitByte( OpCode::True );
+        break;
+    default:
+        Error( "Unknown literal type." );
+        break;
+    }
+}
+
 static void Expression()
 {
     ParsePrecedence( Precedence::Assignment );
@@ -258,14 +302,14 @@ static void Grouping()
 
 static void Number()
 {
-    Value value;
+    double doubleValue;
     auto [_, ec] = std::from_chars(
         parser.previous.lexeme.data(),
         parser.previous.lexeme.data() + parser.previous.lexeme.size(),
-        value );
+        doubleValue );
     if ( ec == std::errc() )
     {
-        EmitConstant( value );
+        EmitConstant( Value{ doubleValue } );
     }
     else
     {
@@ -280,6 +324,9 @@ static void Unary()
 
     switch ( operatorType )
     {
+    case TokenType::Bang:
+        EmitByte( OpCode::Not );
+        break;
     case TokenType::Minus:
         EmitByte( OpCode::Negate );
         break;
@@ -301,31 +348,31 @@ static std::unordered_map<TokenType, ParseRule> Rules = {
     { TokenType::Semicolon, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::Slash, { .prefix = nullptr, .infix = &Binary, .precedence = Precedence::Factor } },
     { TokenType::Star, { .prefix = nullptr, .infix = &Binary, .precedence = Precedence::Factor } },
-    { TokenType::Bang, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
-    { TokenType::BangEqual, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
+    { TokenType::Bang, { .prefix = &Unary, .infix = nullptr, .precedence = Precedence::None } },
+    { TokenType::BangEqual, { .prefix = nullptr, .infix = &Binary, .precedence = Precedence::Equality } },
     { TokenType::Equal, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
-    { TokenType::EqualEqual, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
-    { TokenType::Greater, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
-    { TokenType::GreaterEqual, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
-    { TokenType::Less, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
-    { TokenType::LessEqual, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
+    { TokenType::EqualEqual, { .prefix = nullptr, .infix = &Binary, .precedence = Precedence::Equality } },
+    { TokenType::Greater, { .prefix = nullptr, .infix = &Binary, .precedence = Precedence::Comparison } },
+    { TokenType::GreaterEqual, { .prefix = nullptr, .infix = &Binary, .precedence = Precedence::Comparison } },
+    { TokenType::Less, { .prefix = nullptr, .infix = &Binary, .precedence = Precedence::Comparison } },
+    { TokenType::LessEqual, { .prefix = nullptr, .infix = &Binary, .precedence = Precedence::Comparison } },
     { TokenType::Identifier, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::String, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::Number, { .prefix = &Number, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::And, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::Class, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::Else, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
-    { TokenType::False, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
+    { TokenType::False, { .prefix = &Literal, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::Fun, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::For, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::If, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
-    { TokenType::Nil, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
+    { TokenType::Nil, { .prefix = &Literal, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::Or, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::Print, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::Return, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::Super, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::This, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
-    { TokenType::True, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
+    { TokenType::True, { .prefix = &Literal, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::Var, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::While, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::Error, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },

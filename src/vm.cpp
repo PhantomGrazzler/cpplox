@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <functional>
 #include <string_view>
+#include <expected>
 
 namespace cpplox
 {
@@ -30,12 +31,34 @@ static constexpr cpplox::Value ReadConstant()
     return vm.pChunk->constants.values.at( ReadByte() );
 }
 
-template<class TOperation>
-cpplox::Value BinaryOperation( cpplox::VM& vm, TOperation&& op )
+static void RuntimeError( const std::string_view message )
 {
-    const auto rhs = vm.PopValue();
-    const auto lhs = vm.PopValue();
-    return op( lhs, rhs );
+    using namespace cpplox;
+    std::println( "Runtime error: {}", message );
+    std::println( "[line {}] in script", vm.pChunk->lines.at( vm.instructionIndex - 1 ) );
+    vm.stack = {};
+}
+
+template<class TOperation>
+std::expected<cpplox::Value, cpplox::InterpretResult> BinaryOperation( cpplox::VM& vm, TOperation&& op )
+{
+    if ( !std::holds_alternative<double>( vm.stack.peek( 0 ) ) ||
+         !std::holds_alternative<double>( vm.stack.peek( 1 ) ) )
+    {
+        RuntimeError( "Operands must be numbers." );
+        return std::unexpected( cpplox::InterpretResult::RuntimeError );
+    }
+    else
+    {
+        const auto rhs = std::get<double>( vm.PopValue() );
+        const auto lhs = std::get<double>( vm.PopValue() );
+        return op( lhs, rhs );
+    }
+}
+
+[[nodiscard]] static bool IsFalsey( const cpplox::Value& value )
+{
+    return IsNil( value ) || ( IsBool( value ) && !AsBool( value ) );
 }
 
 static cpplox::InterpretResult Run()
@@ -57,39 +80,133 @@ static cpplox::InterpretResult Run()
             break;
         }
 
+        case OpCode::Nil:
+        {
+            vm.stack.push( Value{} );
+            break;
+        }
+
+        case OpCode::True:
+        {
+            vm.stack.push( Value( true ) );
+            break;
+        }
+
+        case OpCode::False:
+        {
+            vm.stack.push( Value( false ) );
+            break;
+        }
+
+        case OpCode::Equal:
+        {
+            const auto rhs = vm.PopValue();
+            const auto lhs = vm.PopValue();
+            vm.stack.push( AsBool( ValuesEqual( lhs, rhs ) ) );
+            break;
+        }
+
+        case OpCode::Greater:
+        {
+            if ( const auto result = BinaryOperation( vm, std::greater<>() ); !result.has_value() )
+            {
+                return result.error();
+            }
+            else
+            {
+                vm.stack.push( result.value() );
+            }
+            break;
+        }
+
+        case OpCode::Less:
+        {
+            if ( const auto result = BinaryOperation( vm, std::less<>() ); !result.has_value() )
+            {
+                return result.error();
+            }
+            else
+            {
+                vm.stack.push( result.value() );
+            }
+            break;
+        }
+
         case OpCode::Add:
         {
-            vm.stack.push( BinaryOperation( vm, std::plus<>() ) );
+            if ( const auto result = BinaryOperation( vm, std::plus<>() ); !result.has_value() )
+            {
+                return result.error();
+            }
+            else
+            {
+                vm.stack.push( result.value() );
+            }
             break;
         }
 
         case OpCode::Subtract:
         {
-            vm.stack.push( BinaryOperation( vm, std::minus<>() ) );
+            if ( const auto result = BinaryOperation( vm, std::minus<>() ); !result.has_value() )
+            {
+                return result.error();
+            }
+            else
+            {
+                vm.stack.push( result.value() );
+            }
             break;
         }
 
         case OpCode::Multiply:
         {
-            vm.stack.push( BinaryOperation( vm, std::multiplies<>() ) );
+            if ( const auto result = BinaryOperation( vm, std::multiplies<>() ); !result.has_value() )
+            {
+                return result.error();
+            }
+            else
+            {
+                vm.stack.push( result.value() );
+            }
             break;
         }
 
         case OpCode::Divide:
         {
-            vm.stack.push( BinaryOperation( vm, std::divides<>() ) );
+            if ( const auto result = BinaryOperation( vm, std::divides<>() ); !result.has_value() )
+            {
+                return result.error();
+            }
+            else
+            {
+                vm.stack.push( result.value() );
+            }
+            break;
+        }
+
+        case OpCode::Not:
+        {
+            vm.stack.push( Value( IsFalsey( vm.PopValue() ) ) );
             break;
         }
 
         case OpCode::Negate:
         {
-            vm.stack.push( -vm.PopValue() );
+            if ( const auto& topValue = vm.stack.top(); !std::holds_alternative<double>( topValue ) )
+            {
+                RuntimeError( "Operand must be a number." );
+                return InterpretResult::RuntimeError;
+            }
+            else
+            {
+                vm.stack.push( -std::get<double>( vm.PopValue() ) );
+            }
             break;
         }
 
         case OpCode::Return:
         {
-            std::println( "{}", vm.PopValue() );
+            std::println( "{}", ToString( vm.PopValue() ) );
             return InterpretResult::Ok;
         }
 

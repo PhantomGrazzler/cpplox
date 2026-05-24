@@ -13,10 +13,17 @@ namespace cpplox
 enum class OpCode : std::uint8_t
 {
     Constant,
+    Nil,
+    True,
+    False,
+    Equal,
+    Greater,
+    Less,
     Add,
     Subtract,
     Multiply,
     Divide,
+    Not,
     Negate,
     Return,
 };
@@ -27,6 +34,18 @@ enum class OpCode : std::uint8_t
     {
     case OpCode::Constant:
         return "Constant";
+    case OpCode::Nil:
+        return "nil";
+    case OpCode::True:
+        return "true";
+    case OpCode::False:
+        return "false";
+    case OpCode::Equal:
+        return "Equal";
+    case OpCode::Greater:
+        return "Greater";
+    case OpCode::Less:
+        return "Less";
     case OpCode::Add:
         return "Add";
     case OpCode::Subtract:
@@ -35,6 +54,8 @@ enum class OpCode : std::uint8_t
         return "Multiply";
     case OpCode::Divide:
         return "Divide";
+    case OpCode::Not:
+        return "Not";
     case OpCode::Negate:
         return "Negate";
     case OpCode::Return:
