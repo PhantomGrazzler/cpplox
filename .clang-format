@@ -55,7 +55,7 @@ SpacesInConditionalStatement: true
 SpacesInContainerLiterals: false
 SpacesInParentheses: true
 SpacesInSquareBrackets: false
-Standard: c++17
+Standard: c++20
 TabWidth: 4
 UseCRLF: false
 UseTab: Never

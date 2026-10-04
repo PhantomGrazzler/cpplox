@@ -3,6 +3,7 @@
 #include "value.hpp"
 #include "chunk.hpp"
 #include "compiler.hpp"
+#include "object.hpp"
 
 #include <print>
 #include <cstdint>
@@ -13,7 +14,7 @@
 namespace cpplox
 {
 // Is there a way to reduce the scope of this variable while keeping the code readable?
-VM vm;
+VM vm{};
 } // namespace cpplox
 
 namespace
@@ -59,6 +60,22 @@ std::expected<cpplox::Value, cpplox::InterpretResult> BinaryOperation( cpplox::V
 [[nodiscard]] static bool IsFalsey( const cpplox::Value& value )
 {
     return IsNil( value ) || ( IsBool( value ) && !AsBool( value ) );
+}
+
+static void Concatenate()
+{
+    using namespace cpplox;
+
+    const auto* pRhs = AsString( vm.PopValue() );
+    const auto* pLhs = AsString( vm.PopValue() );
+    const auto totalLength = pLhs->Length + pRhs->Length;
+    auto* pNewChars = new char[totalLength + 1];
+    std::memcpy( pNewChars, pLhs->Chars, pLhs->Length );
+    std::memcpy( pNewChars + pLhs->Length, pRhs->Chars, pRhs->Length );
+    pNewChars[totalLength] = '\0';
+
+    auto* pNewObjString = TakeString( pNewChars, totalLength );
+    vm.stack.push( Value{ pNewObjString } );
 }
 
 static cpplox::InterpretResult Run()
@@ -134,14 +151,27 @@ static cpplox::InterpretResult Run()
 
         case OpCode::Add:
         {
-            if ( const auto result = BinaryOperation( vm, std::plus<>() ); !result.has_value() )
+            if ( IsString( vm.stack.peek( 0 ) ) && IsString( vm.stack.peek( 1 ) ) )
             {
-                return result.error();
+                Concatenate();
+            }
+            else if ( IsNumber( vm.stack.peek( 0 ) ) && IsNumber( vm.stack.peek( 1 ) ) )
+            {
+                if ( const auto result = BinaryOperation( vm, std::plus<>() ); !result.has_value() )
+                {
+                    return result.error();
+                }
+                else
+                {
+                    vm.stack.push( result.value() );
+                }
             }
             else
             {
-                vm.stack.push( result.value() );
+                RuntimeError( "Operands must be two numbers or two strings." );
+                return cpplox::InterpretResult::RuntimeError;
             }
+
             break;
         }
 
@@ -220,6 +250,34 @@ static cpplox::InterpretResult Run()
 
 namespace cpplox
 {
+
+static void FreeObject( Obj* pObj )
+{
+    switch ( pObj->Type )
+    {
+    case ObjectType::String:
+    {
+        auto* pObjString = AsString( pObj );
+        delete[] pObjString->Chars;
+        delete pObjString;
+    }
+    break;
+
+    default:
+        std::println( "[WARNING] Not freeing object of type {}.", static_cast<int>( pObj->Type ) );
+    }
+}
+
+VM::~VM()
+{
+    auto* pObj = pObjects;
+    while ( pObj != nullptr )
+    {
+        auto* pNext = pObj->pNext;
+        FreeObject( pObj );
+        pObj = pNext;
+    }
+}
 
 InterpretResult Interpret( Chunk* pChunk )
 {

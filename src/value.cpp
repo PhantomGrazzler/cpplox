@@ -1,7 +1,23 @@
 #include "value.hpp"
+#include "object.hpp"
+
+#include <cstring>
 
 namespace cpplox
 {
+
+static std::string ToString( const Obj* pObj )
+{
+    switch ( pObj->Type )
+    {
+    case ObjectType::String:
+        return static_cast<const ObjString*>( pObj )->Chars;
+        break;
+
+    default:
+        return "Unknown Object Type";
+    }
+}
 
 std::string ToString( const Value& value )
 {
@@ -18,6 +34,10 @@ std::string ToString( const Value& value )
             else if ( std::holds_alternative<Nil>( val ) )
             {
                 return "nil";
+            }
+            else if ( std::holds_alternative<Obj*>( val ) )
+            {
+                return ToString( AsObj( val ) );
             }
             else
             {
@@ -37,6 +57,16 @@ bool IsBool( const Value& value )
     return std::holds_alternative<bool>( value );
 }
 
+bool IsNumber( const Value& value )
+{
+    return std::holds_alternative<double>( value );
+}
+
+bool IsObj( const Value& value )
+{
+    return std::holds_alternative<Obj*>( value );
+}
+
 bool AsBool( const Value& value )
 {
     return std::get<bool>( value );
@@ -45,6 +75,11 @@ bool AsBool( const Value& value )
 double AsNumber( const Value& value )
 {
     return std::get<double>( value );
+}
+
+Obj* AsObj( const Value& value )
+{
+    return std::get<Obj*>( value );
 }
 
 bool ValuesEqual( const Value& lhs, const Value& rhs )
@@ -68,6 +103,19 @@ bool ValuesEqual( const Value& lhs, const Value& rhs )
             else if ( std::holds_alternative<double>( lhs ) )
             {
                 return AsNumber( lhs ) == AsNumber( rhs );
+            }
+            else if ( std::holds_alternative<Obj*>( lhs ) )
+            {
+                if ( IsString( lhs ) && IsString( rhs ) )
+                {
+                    const auto* pLhs = AsString( lhs );
+                    const auto* pRhs = AsString( rhs );
+                    return pLhs->Length == pRhs->Length && std::memcmp( pLhs->Chars, pRhs->Chars, pLhs->Length ) == 0;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {

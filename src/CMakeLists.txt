@@ -5,6 +5,7 @@ target_sources(cpplox PRIVATE
     chunk.cpp
     compiler.cpp
     debug.cpp
+    object.cpp
     scanner.cpp
     stack.cpp
     value.cpp
@@ -13,6 +14,7 @@ target_sources(cpplox PRIVATE
     chunk.hpp
     compiler.hpp
     debug.hpp
+    object.hpp
     scanner.hpp
     stack.hpp
     value.hpp

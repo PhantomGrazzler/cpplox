@@ -3,6 +3,7 @@
 #include "chunk.hpp"
 #include "value.hpp"
 #include "debug.hpp"
+#include "object.hpp"
 
 #include <string_view>
 #include <print>
@@ -317,6 +318,12 @@ static void Number()
     }
 }
 
+static void String()
+{
+    Value val{ CopyString( parser.previous.lexeme.data() + 1, parser.previous.lexeme.size() - 2 ) };
+    EmitConstant( val );
+}
+
 static void Unary()
 {
     const auto operatorType = parser.previous.type;
@@ -357,7 +364,7 @@ static std::unordered_map<TokenType, ParseRule> Rules = {
     { TokenType::Less, { .prefix = nullptr, .infix = &Binary, .precedence = Precedence::Comparison } },
     { TokenType::LessEqual, { .prefix = nullptr, .infix = &Binary, .precedence = Precedence::Comparison } },
     { TokenType::Identifier, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
-    { TokenType::String, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
+    { TokenType::String, { .prefix = &String, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::Number, { .prefix = &Number, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::And, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },
     { TokenType::Class, { .prefix = nullptr, .infix = nullptr, .precedence = Precedence::None } },

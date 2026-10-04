@@ -17,7 +17,7 @@ See [cslox](https://github.com/PhantomGrazzler/cslox) for the tree-walk interpre
 - [x] Chapter 16. [Scanning on Demand](https://craftinginterpreters.com/scanning-on-demand.html) (Tag [Chapter16_ScanningOnDemand](https://github.com/PhantomGrazzler/cpplox/releases/tag/Chapter16_ScanningOnDemand))
 - [x] Chapter 17. [Compiling Expressions](https://craftinginterpreters.com/compiling-expressions.html) (Tag [Chapter17_CompilingExpressions](https://github.com/PhantomGrazzler/cpplox/releases/tag/Chapter17_CompilingExpressions))
 - [x] Chapter 18. [Types of Values](https://craftinginterpreters.com/types-of-values.html) (Tag [Chapter18_TypesOfValues](https://github.com/PhantomGrazzler/cpplox/releases/tag/Chapter18_TypesOfValues))
-- [ ] Chapter 19. [Strings](https://craftinginterpreters.com/strings.html)
+- [x] Chapter 19. [Strings](https://craftinginterpreters.com/strings.html)  (Tag [Chapter19_Strings](https://github.com/PhantomGrazzler/cpplox/releases/tag/Chapter19_Strings))
 - [ ] Chapter 20. [Hash Tables](https://craftinginterpreters.com/hash-tables.html)
 - [ ] Chapter 21. [Global Variables](https://craftinginterpreters.com/global-variables.html)
 - [ ] Chapter 22. [Local Variables](https://craftinginterpreters.com/local-variables.html)

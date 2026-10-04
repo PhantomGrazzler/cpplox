@@ -21,6 +21,9 @@ InterpretResult Interpret( const std::string_view source );
 
 struct VM
 {
+    VM() = default;
+    ~VM();
+
     Chunk* pChunk = nullptr;
     // Using an index here instead of a pointer directly into the chunk's code may be a decision
     // that I regret later. From Crafting Interpreters it states that using a pointer is faster than
@@ -29,6 +32,7 @@ struct VM
     // TODO: Can we use std::span instead to have pointer-like behaviour while keeping safety?
     size_t instructionIndex = 0;
     Stack<Value> stack;
+    Obj* pObjects = nullptr;
 
     [[nodiscard]] Value PopValue()
     {
@@ -37,5 +41,7 @@ struct VM
         return value;
     }
 };
+
+extern VM vm;
 
 } // namespace cpplox
