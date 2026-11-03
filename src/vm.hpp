@@ -5,9 +5,12 @@
 #include "stack.hpp"
 
 #include <string_view>
+#include <unordered_set>
 
 namespace cpplox
 {
+
+struct ObjString;
 
 enum class InterpretResult
 {
@@ -31,7 +34,8 @@ struct VM
     //
     // TODO: Can we use std::span instead to have pointer-like behaviour while keeping safety?
     size_t instructionIndex = 0;
-    Stack<Value> stack;
+    Stack<Value> stack = {};
+    std::unordered_set<ObjString*> strings = {};
     Obj* pObjects = nullptr;
 
     [[nodiscard]] Value PopValue()

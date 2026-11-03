@@ -106,16 +106,7 @@ bool ValuesEqual( const Value& lhs, const Value& rhs )
             }
             else if ( std::holds_alternative<Obj*>( lhs ) )
             {
-                if ( IsString( lhs ) && IsString( rhs ) )
-                {
-                    const auto* pLhs = AsString( lhs );
-                    const auto* pRhs = AsString( rhs );
-                    return pLhs->Length == pRhs->Length && std::memcmp( pLhs->Chars, pRhs->Chars, pLhs->Length ) == 0;
-                }
-                else
-                {
-                    return false;
-                }
+                return AsObj( lhs ) == AsObj( rhs );
             }
             else
             {

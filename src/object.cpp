@@ -18,6 +18,9 @@ void AssignObjMembers( cpplox::Obj* pObj, cpplox::ObjectType type )
     pString->Chars = chars;
     pString->Length = length;
 
+    using namespace cpplox;
+    vm.strings.insert( pString );
+
     return pString;
 }
 
@@ -26,13 +29,34 @@ void AssignObjMembers( cpplox::Obj* pObj, cpplox::ObjectType type )
 namespace cpplox
 {
 
+[[nodiscard]] static auto FindInternedString( const char* chars, std::size_t length )
+{
+    return std::find_if( vm.strings.cbegin(), vm.strings.cend(), [chars, length]( const auto* pString ) {
+        return pString->Length == length && std::memcmp( pString->Chars, chars, length ) == 0;
+    } );
+}
+
 ObjString* TakeString( char* chars, std::size_t length )
 {
+    auto iter = FindInternedString( chars, length );
+    if ( iter != vm.strings.cend() )
+    {
+        delete[] chars;
+        return *iter;
+    }
+
     return AllocateString( chars, length );
 }
 
 ObjString* CopyString( const char* chars, std::size_t length )
 {
+    // Check to see if we have this string already interned before attempting to allocate memory for it on the heap.
+    auto iter = FindInternedString( chars, length );
+    if ( iter != vm.strings.cend() )
+    {
+        return *iter;
+    }
+
     char* heapChars = new char[length + 1];
     std::memcpy( heapChars, chars, length );
     heapChars[length] = '\0';
